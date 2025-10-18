@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>藥嚀管 官方網站 Yao NING GUAN OFFICIAL</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" type="image/png" href="https://i.meee.com.tw/ZdDarEK.png"> 
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DJGFDMENC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9DJGFDMENC');
+  </script>
+  <style>
+    .slide-container {
+      width: 100vw;
+      min-height: 82vh;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide-page {
+      width: 100vw;
+      min-height: 82vh;
+      position: absolute;
+      left: 0; top: 0;
+      transition: transform 0.9s cubic-bezier(.45,1.35,.45,1), opacity 0.6s;
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .slide-page.active {
+      opacity: 1;
+      z-index: 2;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .slide-page.prev {
+      opacity: 0.2;
+      z-index: 1;
+      transform: translateY(-60vh) scale(0.97) rotate(-2deg);
+    }
+    .slide-page.next {
+      opacity: 0;
+      z-index: 0;
+      transform: translateY(100vh) scale(0.98);
+    }
+    .tool-title {
+      font-size: 3.2vw;
+      font-weight: 500;
+      margin: 3vw 0 2vw 0;
+      letter-spacing: 6px;
+      text-align: center;
+      width: 100%;
+    }
+    .tool-main-row {
+      display: flex;
+      flex-direction: row;
+      width: 92vw;
+      max-width: 1400px;
+      justify-content: center;
+      margin: 0 auto;
+      gap: 4vw;
+    }
+    .tool-col {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      gap: 2vw;
+    }
+    .tool-box {
+      background: linear-gradient(to bottom, #fff 28%, #61a543 85%);
+      border-radius: 28px;
+      border: 2px solid #222;
+      margin-bottom: 1vw;
+      width: 38vw;
+      max-width: 600px;
+      min-width: 220px;
+      min-height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2vw;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: #111;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .tool-icon-group {
+      background: linear-gradient(to bottom, #fff 22%, #61a543 95%);
+      border-radius: 24px;
+      border: 2px solid #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2vw 0;
+      width: 38vw;
+      max-width: 600px;
+      min-width: 220px;
+      min-height: 140px;
+      padding: 2vw 0 2vw 0;
+      box-sizing: border-box;
+    }
+    .tool-icon-row {
+      display: flex;
+      flex-direction: row;
+      gap: 2vw;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 1vw;
+    }
+    .tool-icon {
+      width: 70px;
+      height: 70px;
+      max-width: 70px;
+      max-height: 70px;
+      min-width: 50px;
+      min-height: 50px;
+      background: #fff;
+      border: 2px solid #111;
+      border-radius: 14px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .tool-icon img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+      background: transparent;
+      border-radius: 8px;
+      box-shadow: none;
+    }
+    @media (max-width: 1100px) {
+      .tool-main-row { flex-direction: column; align-items: center; gap: 5vw;}
+      .tool-col { width: 95vw; max-width: 650px;}
+      .tool-box,.tool-icon-group { width: 95vw; min-width: 160px; max-width: 650px; }
+      .tool-title { font-size: 7vw; }
+      .tool-box { font-size: 3.4vw;}
+      .tool-icon, .tool-icon img { width: 80px; height: 80px; min-width: 42px; min-height: 42px; max-width: 80px; max-height: 80px;}
+      .tool-icon-row { gap: 2vw; }
+    }
+    @media (max-width: 700px) {
+      .tool-title { font-size: 8vw; margin: 5vw 0 3vw 0;}
+      .tool-main-row { flex-direction: column; gap: 5vw;}
+      .tool-col { width: 99vw; }
+      .tool-box,.tool-icon-group { width: 98vw; min-width: 96px; }
+      .tool-box { font-size: 4.2vw;}
+      .tool-icon, .tool-icon img { width: 66px; height: 66px; min-width: 32px; min-height: 32px; max-width: 66px; max-height: 66px;}
+      .tool-icon-group { gap: 2vw 0; }
+      .tool-icon-row { gap: 2vw; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-right-group">
+        <a href="index.html" class="navbar-item">HOME</a>
+        <a href="function.html" class="navbar-item">功能頁面</a>
+        <a href="member.html" class="navbar-item">藥物基本知識</a>
+        <a href="set.html" class="navbar-item">架設技術內容</a>
+        <a href="span.html" class="navbar-item">抽獎頁面</a>
+        <a href="contact.html" class="navbar-item">聯絡我們</a>
+      </div>
+      <div class="navbar-right">
+        <button class="navbar-icon" aria-label="功能選單"></button>
+      </div>
+    </div>
+  </nav>
+  <div class="slide-container" id="slideContainer">
+    <section class="slide-page active" data-index="0">
+      <div class="tool-title">使用工具</div>
+      <div class="tool-main-row">
+        <div class="tool-col">
+          <div class="tool-box">程式設計-李欣蓉</div>
+          <div class="tool-icon-group">
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaXHq-7G_hSHtna8BrMMOQyWuT49vOSkckOw&s" alt="Figma"></div>
+              <div class="tool-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Adobe_Photoshop_CC_icon.svg/1051px-Adobe_Photoshop_CC_icon.svg.png" alt="PS"></div>
+              <div class="tool-icon"><img src="https://developer.apple.com/assets/elements/icons/core-ml/core-ml-256x256_2x.png" alt="ML"></div>
+            </div>
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Adobe_Illustrator_CC_icon.svg/512px-Adobe_Illustrator_CC_icon.svg.png" alt="Ai"></div>
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPE69SFNIWcmqMOVlPvSolhPhLHYVbJkuSiA&s" alt="Xcode"></div>
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQScs0omvhUYyWjw5060SN-TYM7CbW23xLmWw&s" alt="Lmstudio"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-col">
+          <div class="tool-box">網頁設計-曹峻森</div>
+          <div class="tool-icon-group">
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://static.vecteezy.com/system/resources/previews/021/059/827/non_2x/chatgpt-logo-chat-gpt-icon-on-white-background-free-vector.jpg" alt="Gpt"></div>
+              <div class="tool-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Adobe_Premiere_Pro_CC_icon.svg/2101px-Adobe_Premiere_Pro_CC_icon.svg.png" alt="Pr"></div>
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbsNlmX0r4ICIGkTn47QkNqI3OkkINDd_cPA&s" alt="Gemini"></div>
+            </div>
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaXHq-7G_hSHtna8BrMMOQyWuT49vOSkckOw&s" alt="Figma"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide-page next" data-index="1">
+      <div class="tool-title">使用工具</div>
+      <div class="tool-main-row">
+        <div class="tool-col">
+          <div class="tool-box">專案經理-廖辰欣</div>
+          <div class="tool-icon-group">
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://play-lh.googleusercontent.com/Tiv5MuLN1tGkGT8caZbjz4GT0i0dRfHRQINeSkZL4-QskGkrEn1lcJhhl72CfOMYo9Q" alt="Time tree"></div>
+              <div class="tool-icon"><img src="https://i.ytimg.com/vi/ZuigKFyagUs/sddefault.jpg" alt="GanttProject"></div>
+              <div class="tool-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/2295px-Google_Drive_icon_%282020%29.svg.png" alt="Google drive"></div>
+            </div>
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGpJ8UFG03-e_wuIAfqnNlnVzUDZ-4Uxxwiw&s" alt="Canva"></div>
+              <div class="tool-icon"><img src="https://images.freeimages.com/fic/images/icons/2795/office_2013_hd/2000/word.png" alt="Word"></div>
+              <div class="tool-icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/notion.svg" alt="Notion"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-col">
+          <div class="tool-box">社群行銷-周耘伊</div>
+          <div class="tool-icon-group">
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://i.pinimg.com/564x/85/b5/95/85b59552cf7e898318a463a0bd175936.jpg" alt="DaVinci"></div>
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoM-s_WONciI_KmIea-Jn1Hq1FuwOZkJIoFw&s" alt="Mail"></div>
+              <div class="tool-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png" alt="Ig"></div>
+            </div>
+            <div class="tool-icon-row">
+              <div class="tool-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGpJ8UFG03-e_wuIAfqnNlnVzUDZ-4Uxxwiw&s" alt="Canva"></div>
+              <div class="tool-icon"><img src="https://static.vecteezy.com/system/resources/previews/021/059/827/non_2x/chatgpt-logo-chat-gpt-icon-on-white-background-free-vector.jpg" alt="Gpt"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer>
+    Copyright 2025 藥嚀管 (UI Design  David Cao , Coding Setup 、網站架設維護、資安控管 <a href="https://tw.linkedin.com/in/nasirlincy" target="_blank">  Nasir Lin</a>)
+  </footer>
+  <script>
+    const pages = document.querySelectorAll('.slide-page');
+    let pageCurrent = 0;
+    let pageAnimating = false;
+    function showPage(idx) {
+      if (idx < 0 || idx >= pages.length) return;
+      pages.forEach((pg, i) => {
+        pg.classList.remove('prev', 'active', 'next');
+        if (i < idx) pg.classList.add('prev');
+        else if (i === idx) pg.classList.add('active');
+        else pg.classList.add('next');
+      });
+      pageCurrent = idx;
+    }
+    function scrollHandler(e) {
+      if (pageAnimating) return;
+      const delta = e.wheelDelta || -e.deltaY || -e.detail;
+      if (delta < 0 && pageCurrent < pages.length - 1) {
+        pageAnimating = true;
+        showPage(pageCurrent + 1);
+        setTimeout(() => pageAnimating = false, 900);
+      } else if (delta > 0 && pageCurrent > 0) {
+        pageAnimating = true;
+        showPage(pageCurrent - 1);
+        setTimeout(() => pageAnimating = false, 900);
+      }
+    }
+    let touchStartY = null;
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
+    });
+    document.addEventListener('touchend', e => {
+      if (touchStartY === null) return;
+      let endY = e.changedTouches[0].clientY;
+      let diff = endY - touchStartY;
+      if (Math.abs(diff) > 60 && !pageAnimating) {
+        if (diff < 0 && pageCurrent < pages.length - 1) {
+          pageAnimating = true;
+          showPage(pageCurrent + 1);
+          setTimeout(() => pageAnimating = false, 900);
+        } else if (diff > 0 && pageCurrent > 0) {
+          pageAnimating = true;
+          showPage(pageCurrent - 1);
+          setTimeout(() => pageAnimating = false, 900);
+        }
+      }
+      touchStartY = null;
+    });
+    document.getElementById('slideContainer').addEventListener('wheel', scrollHandler, { passive: false });
+    document.addEventListener('keydown', (e) => {
+      if (pageAnimating) return;
+      if (e.key === 'ArrowDown' && pageCurrent < pages.length - 1) {
+        pageAnimating = true;
+        showPage(pageCurrent + 1);
+        setTimeout(() => pageAnimating = false, 900);
+      } else if (e.key === 'ArrowUp' && pageCurrent > 0) {
+        pageAnimating = true;
+        showPage(pageCurrent - 1);
+        setTimeout(() => pageAnimating = false, 900);
+      }
+    });
+    showPage(0);
+  </script>
+</body>
+</html>

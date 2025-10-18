@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>藥嚀管 官方網站 Yao NING GUAN OFFICIAL</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="icon" type="image/png" href="https://i.meee.com.tw/ZdDarEK.png"> 
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    .story-content-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 88vh;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .section-img {
+      max-width: 94vw;
+      max-height: 82vh;
+      border-radius: 28px;
+      background: #fff;
+      padding: 6px;
+      object-fit: contain;
+      transition: none;
+      display: block;
+      margin: 0 auto;
+      border: none;
+      box-shadow: none !important; /* 強制無陰影 */
+      cursor: pointer;
+    }
+    /* 完全移除所有狀態下的陰影，包括上一頁、下一頁、當前頁 */
+    .story-section .section-img,
+    .story-section.active .section-img,
+    .story-section.prev .section-img,
+    .story-section.next .section-img {
+      box-shadow: none !important;
+      border: none !important;
+    }
+    @media (max-width: 700px) {
+      .story-content-box { height: 74vh; }
+      .section-img { max-width: 100vw; max-height: 70vh; }
+    }
+  </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9DJGFDMENC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9DJGFDMENC');
+</script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-right-group">
+        <a href="index.html" class="navbar-item">HOME</a>
+        <a href="function.html" class="navbar-item">功能頁面</a>
+        <a href="member.html" class="navbar-item">藥物基本知識</a>
+        <a href="set.html" class="navbar-item">架設技術內容</a>
+        <a href="span.html" class="navbar-item">抽獎頁面</a>
+        <a href="contact.html" class="navbar-item">聯絡我們</a>
+      </div>
+      <div class="navbar-right">
+        <button class="navbar-icon" aria-label="功能選單"></button>
+      </div>
+    </div>
+  </nav>
+  <div class="story-scroll-container" id="storyContainer">
+
+    <section class="story-section about-section active" data-index="0">
+      <div class="story-content-box">
+        <img class="section-img" src="https://i.meee.com.tw/zYNlnBV.png" alt="封面1" loading="lazy" />
+      </div>
+    </section>
+    <section class="story-section alert-section next" data-index="1">
+      <div class="story-content-box">
+        <img class="section-img" src="https://i.meee.com.tw/ys894gl.png" alt="封面2" loading="lazy" />
+      </div>
+    </section>
+    <section class="story-section research-section next" data-index="2">
+      <div class="story-content-box">
+        <img class="section-img" src="https://i.meee.com.tw/G9YCVEA.png" alt="封面3" loading="lazy" />
+      </div>
+    </section>
+    <section class="story-section purpose-section next" data-index="3">
+      <div class="story-content-box">
+        <img class="section-img" src="https://i.meee.com.tw/87HhNH2.png" alt="封面4" loading="lazy" />
+      </div>
+    </section>
+    <section class="story-section case-section next" data-index="4">
+      <div class="story-content-box">
+        <img class="section-img" src="https://i.meee.com.tw/oUXJdlq.png" alt="封面5" loading="lazy" />
+      </div>
+    </section>
+    <section class="story-section figma-section next" data-index="5">
+      <div class="story-content-box">
+        <a href="https://figma.com/proto/EunukkGXMpWb9jk2gOJP0C/Untitled?page-id=0%3A1&node-id=4-2&p=f&viewport=148%2C198%2C1&t=ZxHp6NlmrMk9171x-1&scaling=min-zoom&content-scaling=fixed" target="_blank" rel="noopener">
+          <img class="section-img" src="https://i.meee.com.tw/8U9gbik.png" alt="封面6 (Figma)" loading="lazy" />
+        </a>
+      </div>
+    </section>
+  </div>
+  <footer>
+    Copyright 2025 藥嚀管 (UI Design  David Cao , Coding Setup 、網站架設維護、資安控管 <a href="https://tw.linkedin.com/in/nasirlincy" target="_blank">  Nasir Lin</a>)
+  </footer>
+  <script>
+    // 預加載所有圖片到本機 (瀏覽器快取)
+    const imageUrls = [
+      "https://i.meee.com.tw/zYNlnBV.png",
+      "https://i.meee.com.tw/ys894gl.png",
+      "https://i.meee.com.tw/G9YCVEA.png",
+      "https://i.meee.com.tw/87HhNH2.png",
+      "https://i.meee.com.tw/oUXJdlq.png",
+      "https://i.meee.com.tw/8U9gbik.png"
+    ];
+    imageUrls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+
+    const sections = document.querySelectorAll('.story-section');
+    let current = 0;
+    let animating = false;
+
+    function showSection(idx) {
+      if (idx < 0 || idx >= sections.length) return;
+      sections.forEach((sec, i) => {
+        sec.classList.remove('prev', 'active', 'next');
+        if (i < idx) sec.classList.add('prev');
+        else if (i === idx) sec.classList.add('active');
+        else sec.classList.add('next');
+      });
+      current = idx;
+    }
+    function scrollHandler(e) {
+      if (animating) return;
+      e.preventDefault();
+      const delta = e.wheelDelta || -e.deltaY || -e.detail;
+      if (delta < 0 && current < sections.length - 1) {
+        animating = true;
+        showSection(current + 1);
+        setTimeout(() => animating = false, 900);
+      } else if (delta > 0 && current > 0) {
+        animating = true;
+        showSection(current - 1);
+        setTimeout(() => animating = false, 900);
+      }
+    }
+
+    let touchStartY = null;
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
+    });
+    document.addEventListener('touchend', e => {
+      if (touchStartY === null) return;
+      let endY = e.changedTouches[0].clientY;
+      let diff = endY - touchStartY;
+      if (Math.abs(diff) > 60 && !animating) {
+        if (diff < 0 && current < sections.length - 1) {
+          animating = true;
+          showSection(current + 1);
+          setTimeout(() => animating = false, 900);
+        } else if (diff > 0 && current > 0) {
+          animating = true;
+          showSection(current - 1);
+          setTimeout(() => animating = false, 900);
+        }
+      }
+      touchStartY = null;
+    });
+
+    document.getElementById('storyContainer').addEventListener('wheel', scrollHandler, { passive: false });
+
+    document.addEventListener('keydown', (e) => {
+      if (animating) return;
+      if (e.key === 'ArrowDown' && current < sections.length - 1) {
+        animating = true;
+        showSection(current + 1);
+        setTimeout(() => animating = false, 900);
+      } else if (e.key === 'ArrowUp' && current > 0) {
+        animating = true;
+        showSection(current - 1);
+        setTimeout(() => animating = false, 900);
+      }
+    });
+
+    showSection(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>藥嚀管 官方網站 Yao NING GUAN OFFICIAL</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" type="image/png" href="https://i.meee.com.tw/ZdDarEK.png"> 
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DJGFDMENC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9DJGFDMENC');
+  </script>
+  <style>
+    /* page-level layout and lottery-specific styles
+       NOTE: nav / footer styles were intentionally removed so main.css provides them */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden !important;
+    }
+    body {
+      min-height: 100vh;
+      height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* ---- 以下為抽獎頁面原始 CSS ---- */
+    .lottery-layout {
+      display: flex;
+      gap: 32px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 36px 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      justify-content: flex-start;
+      align-items: stretch;
+      margin-bottom: 24px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+    .lottery-left {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      min-width: 400px;
+    }
+    .lottery-card {
+      background: #e7e7e7;
+      border-radius: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #222;
+      font-size: 1.7em;
+      font-family: 'Noto Sans TC', 'Segoe UI', Arial, sans-serif;
+    }
+    .lottery-title-card {
+      width: 340px;
+      height: 70px;
+      margin-bottom: 10px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f9e7c2 0%, #edefe1 100%);
+      color: #338a35;
+      font-size: 1.35em;
+      letter-spacing: 2px;
+    }
+    .lottery-wheel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff8ec;
+      border-radius: 20px;
+      box-shadow: 0 2px 18px rgba(37,143,46,0.13);
+      padding: 30px 25px 20px;
+      width: 360px;
+      margin: 0 auto;
+    }
+    .lottery-wheel {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin-bottom: 22px;
+      transition: filter 0.18s;
+    }
+    .lottery-pointer {
+      position: absolute;
+      left: 50%;
+      top: -30px;
+      transform: translateX(-50%);
+      width: 0; 
+      height: 0; 
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 32px solid #338a35;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.07));
+    }
+    canvas#wheelCanvas {
+      border-radius: 50%;
+      background: #f3f3f3;
+      box-shadow: 0 1px 8px rgba(37,143,46,0.10);
+    }
+    .lottery-spin-btn {
+      display: block;
+      margin: 0 auto 18px;
+      background: linear-gradient(90deg, #44b74a 0%, #8ddf91 100%);
+      border: none;
+      border-radius: 24px;
+      font-size: 1.18em;
+      font-weight: 700;
+      color: #fff;
+      padding: 12px 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(37,143,46,0.10);
+      transition: background 0.2s, box-shadow 0.2s;
+      letter-spacing: 1px;
+    }
+    .lottery-spin-btn:active {
+      background: linear-gradient(90deg,#398f3a 0%,#6ec86e 100%);
+      box-shadow: 0 1px 4px rgba(37,143,46,0.13);
+    }
+    .lottery-input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      justify-content: center;
+    }
+    .lottery-input {
+      border: 1.5px solid #b2b2b2;
+      border-radius: 7px;
+      padding: 7px 16px;
+      font-size: 1em;
+      outline: none;
+      transition: border 0.18s;
+    }
+    .lottery-input:focus {
+      border-color: #338a35;
+    }
+    .lottery-add-btn {
+      background: linear-gradient(90deg,#338a35 0%,#a5d4a0 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 22px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .lottery-add-btn:active {
+      background: linear-gradient(90deg,#216f23 0%,#8ed591 100%);
+    }
+    .lottery-items-list {
+      max-height: 110px;
+      overflow-y: auto;
+      margin-bottom: 0;
+      margin-top: 0;
+      padding: 0 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      justify-content: flex-start;
+    }
+    .lottery-item-tag {
+      background: #eafae6;
+      color: #338a35;
+      border-radius: 5px;
+      padding: 2px 13px 2px 9px;
+      font-size: 0.99em;
+      margin-top: 6px;
+      margin-right: 0;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+      box-shadow: 0 1px 2px rgba(37,143,46,0.06);
+      position: relative;
+    }
+    .lottery-item-remove {
+      margin-left: 4px;
+      color: #ff5d5d;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.08em;
+      font-weight: bold;
+      padding: 0 2px;
+      border-radius: 4px;
+      transition: background 0.16s;
+    }
+    .lottery-item-remove:hover {
+      background: #ffdede;
+    }
+    .lottery-result {
+      margin: 16px 0 0 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #338a35;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 6px rgba(122, 193, 105, 0.07);
+      min-height: 1.5em;
+    }
+
+    .lottery-function {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 34px 0 0 0;
+      justify-content: flex-start;
+    }
+    .lottery-function-card {
+      background: #e7e7e7;
+      border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #222;
+      font-size: 1.13em;
+      min-width: 120px;
+      min-height: 54px;
+      padding: 0 20px;
+      font-family: 'Noto Sans TC', 'Segoe UI', Arial, sans-serif;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .lottery-function-card:hover {
+      background: #d8eadc;
+      box-shadow: 0 4px 16px rgba(37,143,46,0.10);
+    }
+
+    /* 修正說明位置與邊界 */
+    .lottery-tool-card {
+      box-sizing: border-box;
+      max-width: 360px;
+      width: 100%;
+      padding: 22px 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .lottery-tool-title {
+      text-align:center;
+      font-size:1.15em;
+      font-weight:700;
+      margin-bottom:18px;
+      color:#338a35;
+      border-bottom: 1.5px solid #ededed;
+      padding-bottom: 6px;
+    }
+    .lottery-tool-list {
+      margin:0;
+      padding-left:24px;
+      line-height:1.7;
+      color:#333;
+      font-size:1em;
+      word-break:break-all;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow-wrap: break-word;
+    }
+    .lottery-tool-list li {
+      margin-bottom: 7px;
+      /* 防止超出 */
+      word-break:break-all;
+      overflow-wrap:break-word;
+      max-width: 97%;
+    }
+    @media (max-width: 900px) {
+      .lottery-layout {
+        flex-direction: column;
+        gap: 18px;
+        padding: 18px 6px;
+        align-items: stretch;
+        max-width: 99vw;
+      }
+      .lottery-left {
+        flex-direction: row;
+        gap: 14px;
+        min-width: 0;
+      }
+      .lottery-title-card, .lottery-wheel-container {
+        width: 100%;
+        min-width: 0;
+        font-size: 1.15em;
+      }
+      .lottery-title-card {
+        height: 60px;
+      }
+      .lottery-wheel-container {
+        padding: 20px 4px 14px;
+      }
+      .lottery-tool-card {
+        max-width: 100vw;
+        padding: 14px 8vw 12px 8vw;
+      }
+    }
+    @media (max-width: 600px) {
+      .lottery-layout {
+        flex-direction: column;
+        gap: 10px;
+        padding: 8px 2px;
+      }
+      .lottery-left {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .lottery-title-card, .lottery-wheel-container {
+        width: 100%;
+        min-width: 0;
+        font-size: 1em;
+      }
+      .lottery-title-card {
+        height: 40px;
+      }
+      .lottery-wheel-container {
+        padding: 10px 2px 10px;
+      }
+      .lottery-items-list {
+        gap: 4px 8px;
+      }
+      .lottery-tool-card {
+        max-width: 100vw;
+        padding: 8px 4vw 8px 4vw;
+      }
+      .lottery-tool-list li {
+        max-width: 96vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-right-group">
+        <a href="index.html" class="navbar-item">HOME</a>
+        <a href="function.html" class="navbar-item">功能頁面</a>
+        <a href="member.html" class="navbar-item">藥物基本知識</a>
+        <a href="set.html" class="navbar-item">架設技術內容</a>
+        <a href="span.html" class="navbar-item">抽獎頁面</a>
+        <a href="contact.html" class="navbar-item">聯絡我們</a>
+      </div>
+      <div class="navbar-right">
+        <button class="navbar-icon" aria-label="功能選單"></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="lottery-layout">
+      <div class="lottery-left">
+        <div class="lottery-card lottery-title-card">抽獎轉盤</div>
+        <div class="lottery-wheel-container">
+          <div class="lottery-pointer"></div>
+          <canvas id="wheelCanvas" width="260" height="260"></canvas>
+          <button class="lottery-spin-btn" id="spinBtn">開始抽獎</button>
+          <div class="lottery-input-row">
+            <input type="text" id="lotteryInput" class="lottery-input" placeholder="輸入新選項..." maxlength="18">
+            <button class="lottery-add-btn" id="addBtn">加入</button>
+          </div>
+          <div class="lottery-items-list" id="itemsList"></div>
+          <div class="lottery-result" id="result"></div>
+        </div>
+      </div>
+      <div class="lottery-card lottery-tool-card">
+        <div class="lottery-tool-title">說明</div>
+        <ul class="lottery-tool-list">
+          <li>新增選項進轉盤（最多12個）</li>
+          <li>點「開始抽獎」即隨機抽一個</li>
+          <li>點選<span style="color:#ff5d5d;">✕</span>可移除單一選項</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Copyright 2025 藥嚀管 (UI Design David Cao , Coding Setup 、網站架設維護、資安控管 <a href="https://tw.linkedin.com/in/nasirlincy" target="_blank"> Nasir Lin</a>)
+  </footer>
+
+  <script>
+    const MAX_ITEMS = 12;
+    const COLORS = [
+      '#a8e063','#56ab2f','#ffe29f','#eecda3','#f7b42c','#f7797d','#86a8e7','#a8edea',
+      '#f5d020','#e1eec3','#f857a6','#ff5858'
+    ];
+    let items = [];
+    let spinning = false;
+    let angle = 0;
+    let resultTimeout = null;
+
+    const wheelCanvas = document.getElementById('wheelCanvas');
+    const ctx = wheelCanvas.getContext('2d');
+    const itemsList = document.getElementById('itemsList');
+    const resultDiv = document.getElementById('result');
+
+    function drawWheel(selectedIndex = null) {
+      ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+      const total = items.length;
+      if (total === 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(130, 130, 120, 0, Math.PI * 2);
+        ctx.fillStyle = "#ececec";
+        ctx.fill();
+        ctx.font = "bold 20px 'Noto Sans TC', Arial";
+        ctx.fillStyle = "#b2b2b2";
+        ctx.textAlign = "center";
+        ctx.fillText("請加入選項", 130, 136);
+        ctx.restore();
+        return;
+      }
+      const center = 130;
+      const radius = 120;
+      const arc = 2 * Math.PI / total;
+      for (let i = 0; i < total; i++) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, angle + arc * i, angle + arc * (i + 1), false);
+        ctx.closePath();
+        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.globalAlpha = (selectedIndex === i) ? 0.56 : 1;
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(angle + arc * (i + 0.5));
+        ctx.textAlign = "center";
+        ctx.font = (items[i].length > 10 ? "bold 13px" : "bold 15px") + " 'Noto Sans TC', Arial";
+        ctx.fillStyle = "#222";
+        ctx.fillText(items[i], 68, 9);
+        ctx.restore();
+      }
+    }
+
+    function updateItemsList() {
+      itemsList.innerHTML = '';
+      items.forEach((item, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'lottery-item-tag';
+        tag.textContent = item;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'lottery-item-remove';
+        removeBtn.innerHTML = '✕';
+        removeBtn.title = '移除';
+        removeBtn.onclick = () => {
+          items.splice(idx,1);
+          drawWheel();
+          updateItemsList();
+          resultDiv.textContent = '';
+        };
+        tag.appendChild(removeBtn);
+        itemsList.appendChild(tag);
+      });
+    }
+
+    document.getElementById('addBtn').onclick = () => {
+      const value = document.getElementById('lotteryInput').value.trim();
+      if (!value) return;
+      if (items.length >= MAX_ITEMS) {
+        alert('最多只能加入12個選項！');
+        return;
+      }
+      if (items.includes(value)) {
+        alert('該選項已存在！');
+        return;
+      }
+      items.push(value);
+      document.getElementById('lotteryInput').value = '';
+      drawWheel();
+      updateItemsList();
+      resultDiv.textContent = '';
+    };
+
+    document.getElementById('lotteryInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') document.getElementById('addBtn').click();
+    });
+
+    document.getElementById('spinBtn').onclick = () => {
+      if (spinning) return;
+      if (items.length === 0) {
+        alert("請先加入至少一個選項！");
+        return;
+      }
+      spinning = true;
+      resultDiv.textContent = '';
+      let total = items.length;
+      let selected = Math.floor(Math.random() * total);
+      let rounds = 6 + Math.floor(Math.random() * 2);
+      let targetAngle = (2 * Math.PI / total) * (total - selected - 0.5);
+      let finalAngle = 2 * Math.PI * rounds + targetAngle;
+      let current = angle;
+      let duration = 2500 + Math.random() * 500;
+      let startTime = null;
+      document.getElementById('addBtn').disabled = true;
+      document.getElementById('spinBtn').disabled = true;
+
+      function animateWheel(ts) {
+        if (!startTime) startTime = ts;
+        let progress = (ts - startTime) / duration;
+        if (progress > 1) progress = 1;
+        let ease = (1 - Math.cos(Math.PI * progress)) / 2;
+        angle = current + (finalAngle - current) * ease;
+        drawWheel();
+        if (progress < 1) {
+          requestAnimationFrame(animateWheel);
+        } else {
+          angle = finalAngle % (2 * Math.PI);
+          drawWheel(selected);
+          spinning = false;
+          document.getElementById('addBtn').disabled = false;
+          document.getElementById('spinBtn').disabled = false;
+          if (resultTimeout) clearTimeout(resultTimeout);
+          resultTimeout = setTimeout(() => {
+            resultDiv.textContent = "🎉 結果：" + items[selected] + " 🎉";
+          }, 260);
+        }
+      }
+      requestAnimationFrame(animateWheel);
+    };
+
+    drawWheel();
+    updateItemsList();
+  </script>
+</body>
+</html>
