@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="https://i.meee.com.tw/ZdDarEK.png"> 
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DJGFDMENC"></script>
+  <script src="css/log.js"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -14,17 +15,14 @@
     gtag('config', 'G-9DJGFDMENC');
   </script>
   <style>
-    /* page-level layout and lottery-specific styles
-       NOTE: nav / footer styles were intentionally removed so main.css provides them */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden !important;
+      overflow: auto;
     }
     body {
       min-height: 100vh;
-      height: 100vh;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -36,21 +34,23 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 18px 0;
     }
 
-    /* ---- 以下為抽獎頁面原始 CSS ---- */
     .lottery-layout {
       display: flex;
-      gap: 32px;
+      gap: 28px;
       background: #fff;
       border-radius: 16px;
-      padding: 36px 28px;
+      padding: 28px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.08);
       justify-content: flex-start;
       align-items: stretch;
       margin-bottom: 24px;
-      max-width: 900px;
+      max-width: 1200px;
+      width: 95%;
       margin-left: auto;
       margin-right: auto;
       box-sizing: border-box;
@@ -58,8 +58,9 @@
     .lottery-left {
       display: flex;
       flex-direction: column;
-      gap: 28px;
-      min-width: 400px;
+      gap: 20px;
+      flex: 5;
+      min-width: 0;
     }
     .lottery-card {
       background: #e7e7e7;
@@ -69,13 +70,10 @@
       align-items: center;
       justify-content: center;
       color: #222;
-      font-size: 1.7em;
       font-family: 'Noto Sans TC', 'Segoe UI', Arial, sans-serif;
     }
     .lottery-title-card {
-      width: 340px;
       height: 70px;
-      margin-bottom: 10px;
       font-weight: 700;
       background: linear-gradient(90deg, #f9e7c2 0%, #edefe1 100%);
       color: #338a35;
@@ -89,48 +87,73 @@
       justify-content: center;
       background: #fff8ec;
       border-radius: 20px;
-      box-shadow: 0 2px 18px rgba(37,143,46,0.13);
-      padding: 30px 25px 20px;
-      width: 360px;
+      box-shadow: 0 2px 12px rgba(37,143,46,0.10);
+      padding: 28px;
       margin: 0 auto;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative; 
     }
     .lottery-wheel {
       position: relative;
-      width: 280px;
-      height: 280px;
-      margin-bottom: 22px;
-      transition: filter 0.18s;
+      width: 560px;
+      height: 420px;
+      margin-bottom: 18px;
+
     }
-    .lottery-pointer {
+    
+
+    #spinnerArrow {
       position: absolute;
       left: 50%;
-      top: -30px;
-      transform: translateX(-50%);
-      width: 0; 
-      height: 0; 
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-bottom: 32px solid #338a35;
-      z-index: 2;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.07));
+      top: 50%; 
+      width: 0;
+      height: 0;
+
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 90px solid #d9534f; 
+      transform-origin: 50% 100%; 
+      transform: translateX(-50%) translateY(-100%); 
+      
+      z-index: 10;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
     }
+    #spinnerArrow::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 100%; 
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: 2px solid #d9534f;
+      border-radius: 50%;
+      transform: translate(-50%, -50%); 
+      z-index: 11;
+    }
+
     canvas#wheelCanvas {
       border-radius: 50%;
       background: #f3f3f3;
-      box-shadow: 0 1px 8px rgba(37,143,46,0.10);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     .lottery-spin-btn {
       display: block;
-      margin: 0 auto 18px;
+      margin: 0 auto 12px;
       background: linear-gradient(90deg, #44b74a 0%, #8ddf91 100%);
       border: none;
       border-radius: 24px;
-      font-size: 1.18em;
+      font-size: 1.12em;
       font-weight: 700;
       color: #fff;
-      padding: 12px 40px;
+      padding: 10px 32px;
       cursor: pointer;
-      box-shadow: 0 2px 10px rgba(37,143,46,0.10);
+      box-shadow: 0 2px 8px rgba(37,143,46,0.10);
       transition: background 0.2s, box-shadow 0.2s;
       letter-spacing: 1px;
     }
@@ -139,18 +162,22 @@
       box-shadow: 0 1px 4px rgba(37,143,46,0.13);
     }
     .lottery-input-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 10px;
+      display: none;
+      gap: 8px;
       justify-content: center;
+      margin-top: 18px;
+      width: 100%;
+      align-items: center;
     }
     .lottery-input {
-      border: 1.5px solid #b2b2b2;
+      border: 1.2px solid #b2b2b2;
       border-radius: 7px;
-      padding: 7px 16px;
-      font-size: 1em;
+      padding: 6px 8px;
+      font-size: 0.88em;
       outline: none;
       transition: border 0.18s;
+      flex: 1;
+      max-width: 100%;
     }
     .lottery-input:focus {
       border-color: #338a35;
@@ -160,8 +187,8 @@
       color: #fff;
       border: none;
       border-radius: 7px;
-      padding: 7px 22px;
-      font-size: 1em;
+      padding: 6px 10px;
+      font-size: 0.88em;
       cursor: pointer;
       font-weight: 600;
       transition: background 0.2s;
@@ -169,56 +196,14 @@
     .lottery-add-btn:active {
       background: linear-gradient(90deg,#216f23 0%,#8ed591 100%);
     }
-    .lottery-items-list {
-      max-height: 110px;
-      overflow-y: auto;
-      margin-bottom: 0;
-      margin-top: 0;
-      padding: 0 6px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-      justify-content: flex-start;
-    }
-    .lottery-item-tag {
-      background: #eafae6;
-      color: #338a35;
-      border-radius: 5px;
-      padding: 2px 13px 2px 9px;
-      font-size: 0.99em;
-      margin-top: 6px;
-      margin-right: 0;
-      margin-bottom: 0;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-weight: 500;
-      box-shadow: 0 1px 2px rgba(37,143,46,0.06);
-      position: relative;
-    }
-    .lottery-item-remove {
-      margin-left: 4px;
-      color: #ff5d5d;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.08em;
-      font-weight: bold;
-      padding: 0 2px;
-      border-radius: 4px;
-      transition: background 0.16s;
-    }
-    .lottery-item-remove:hover {
-      background: #ffdede;
-    }
     .lottery-result {
-      margin: 16px 0 0 0;
-      font-size: 1.2em;
+      margin: 12px 0 0 0;
+      font-size: 1.12em;
       font-weight: bold;
       color: #338a35;
       text-align: center;
       letter-spacing: 2px;
-      text-shadow: 0 2px 6px rgba(122, 193, 105, 0.07);
+      text-shadow: 0 1px 4px rgba(122, 193, 105, 0.06);
       min-height: 1.5em;
     }
 
@@ -249,43 +234,158 @@
       box-shadow: 0 4px 16px rgba(37,143,46,0.10);
     }
 
-    /* 修正說明位置與邊界 */
     .lottery-tool-card {
       box-sizing: border-box;
-      max-width: 360px;
+      flex: 2;
       width: 100%;
-      padding: 22px 18px 16px 18px;
+      padding: 20px 18px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      justify-content: flex-start;
+      align-items: stretch;
     }
     .lottery-tool-title {
-      text-align:center;
-      font-size:1.15em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size:1.02em;
       font-weight:700;
-      margin-bottom:18px;
+      margin-bottom:12px;
       color:#338a35;
       border-bottom: 1.5px solid #ededed;
       padding-bottom: 6px;
     }
+    .lottery-tool-title .title-text {
+      font-weight:700;
+      color:#338a35;
+    }
+    #toggleAddBtn {
+      background: linear-gradient(90deg,#56ab2f 0%,#8ddf91 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 0.9em;
+      cursor: pointer;
+      font-weight:700;
+    }
     .lottery-tool-list {
-      margin:0;
-      padding-left:24px;
-      line-height:1.7;
-      color:#333;
-      font-size:1em;
-      word-break:break-all;
+      margin: 0;
+      padding: 6px 6px;
+      line-height: 1.6;
+      color: #333;
+      font-size: 0.95em;
       box-sizing: border-box;
       max-width: 100%;
-      overflow-wrap: break-word;
+      flex: 1;
+      min-height: 140px;
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .lottery-tool-list li {
       margin-bottom: 7px;
-      /* 防止超出 */
       word-break:break-all;
       overflow-wrap:break-word;
       max-width: 97%;
     }
+    .prize-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eafae6;
+      border-radius: 5px;
+      padding: 6px 10px;
+      font-size: 0.92em;
+      box-shadow: 0 1px 2px rgba(37,143,46,0.06);
+    }
+    .prize-list-name {
+      font-weight: 600;
+      color: #333;
+      word-break: break-word;
+      margin-right: 10px;
+      flex: 1;
+    }
+    .prize-list-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .prize-list-qty {
+      font-weight: 700;
+      color: #338a35;
+      background: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .prize-list-qty.zero {
+      color: #ff5d5d;
+      background: #ffefef;
+    }
+    .prize-list-remove {
+      color: #ff5d5d;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05em;
+      font-weight: bold;
+      padding: 0 4px;
+      border-radius: 4px;
+      transition: background 0.16s;
+    }
+    .prize-list-remove:hover {
+      background: #ffdede;
+    }
+
+    .total-remaining-wrap {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+    .total-label {
+      color: #666;
+      font-size: 1.2em;
+      font-weight: 800;
+      text-align: center;
+    }
+    .total-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(180deg,#ffffff 0%,#e7ffe9 100%);
+      border: 2px solid #cfecd1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2f8a34;
+      font-weight: 900;
+      font-size: 1.8em;
+      box-shadow: 0 2px 12px rgba(37,143,46,0.08);
+    }
+
+    @media (max-width: 1100px) {
+      .lottery-wheel {
+        width: 460px;
+        height: 340px;
+      }
+      .total-circle {
+        width: 90px;
+        height: 90px;
+        font-size: 1.45em;
+      }
+      #spinnerArrow {
+        border-bottom-width: 70px;
+      }
+    }
+
     @media (max-width: 900px) {
       .lottery-layout {
         flex-direction: column;
@@ -293,11 +393,14 @@
         padding: 18px 6px;
         align-items: stretch;
         max-width: 99vw;
+        height: auto;
+        max-height: none;
       }
       .lottery-left {
-        flex-direction: row;
+        flex-direction: column;
         gap: 14px;
         min-width: 0;
+        flex: 5;
       }
       .lottery-title-card, .lottery-wheel-container {
         width: 100%;
@@ -308,18 +411,43 @@
         height: 60px;
       }
       .lottery-wheel-container {
-        padding: 20px 4px 14px;
+        padding: 18px 8px 14px;
+        flex: 1;
+      }
+      .lottery-wheel {
+        width: 380px;
+        height: 300px;
       }
       .lottery-tool-card {
         max-width: 100vw;
         padding: 14px 8vw 12px 8vw;
+        flex: 2;
+      }
+      .lottery-tool-list {
+        min-height: 120px;
+        max-height: 250px;
+        flex: 1 1 250px;
+      }
+      .total-circle {
+        width: 80px;
+        height: 80px;
+      }
+      /* 【修正 4】: 調整指針大小 */
+      #spinnerArrow {
+        border-bottom-width: 60px;
+        border-left-width: 8px;
+        border-right-width: 8px;
+      }
+      #spinnerArrow::before {
+        width: 14px;
+        height: 14px;
       }
     }
     @media (max-width: 600px) {
       .lottery-layout {
         flex-direction: column;
         gap: 10px;
-        padding: 8px 2px;
+        padding: 8px 6px;
       }
       .lottery-left {
         flex-direction: column;
@@ -334,10 +462,11 @@
         height: 40px;
       }
       .lottery-wheel-container {
-        padding: 10px 2px 10px;
+        padding: 10px 6px 10px;
       }
-      .lottery-items-list {
-        gap: 4px 8px;
+      .lottery-wheel {
+        width: 320px;
+        height: 260px;
       }
       .lottery-tool-card {
         max-width: 100vw;
@@ -346,8 +475,47 @@
       .lottery-tool-list li {
         max-width: 96vw;
       }
+      #toggleAddBtn {
+        padding: 6px 8px;
+      }
+      .total-circle {
+        width: 66px;
+        height: 66px;
+        font-size: 1.05em;
+      }
+      #spinnerArrow {
+        border-bottom-width: 50px;
+        border-left-width: 7px;
+        border-right-width: 7px;
+      }
+      #spinnerArrow::before {
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .swal-solid {
+      background: #ffffff !important;
+      border-radius: 14px !important;
+      box-shadow: 0 18px 60px rgba(20,80,20,0.12) !important;
+      color: #06380b !important;
+      border: 1px solid rgba(0,0,0,0.04) !important;
+    }
+    .swal-solid .swal2-title {
+      color: #06380b !important;
+      font-weight: 800 !important;
+    }
+    .swal-solid .swal2-html-container {
+      color: #124a11 !important;
+    }
+    .swal-solid .swal2-confirm {
+      background: linear-gradient(90deg,#44b74a 0%,#8ddf91 100%) !important;
+      color: #fff !important;
+      border: none !important;
+      box-shadow: 0 6px 18px rgba(37,143,46,0.12) !important;
     }
   </style>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar">
@@ -371,24 +539,33 @@
       <div class="lottery-left">
         <div class="lottery-card lottery-title-card">抽獎轉盤</div>
         <div class="lottery-wheel-container">
-          <div class="lottery-pointer"></div>
-          <canvas id="wheelCanvas" width="260" height="260"></canvas>
-          <button class="lottery-spin-btn" id="spinBtn">開始抽獎</button>
-          <div class="lottery-input-row">
-            <input type="text" id="lotteryInput" class="lottery-input" placeholder="輸入新選項..." maxlength="18">
-            <button class="lottery-add-btn" id="addBtn">加入</button>
+          <div class="lottery-wheel">
+            <canvas id="wheelCanvas"></canvas>
+            <div id="spinnerArrow"></div>
           </div>
-          <div class="lottery-items-list" id="itemsList"></div>
+          <button class="lottery-spin-btn" id="spinBtn">開始抽獎</button>          
           <div class="lottery-result" id="result"></div>
         </div>
       </div>
+      
       <div class="lottery-card lottery-tool-card">
-        <div class="lottery-tool-title">說明</div>
-        <ul class="lottery-tool-list">
-          <li>新增選項進轉盤（最多12個）</li>
-          <li>點「開始抽獎」即隨機抽一個</li>
-          <li>點選<span style="color:#ff5d5d;">✕</span>可移除單一選項</li>
-        </ul>
+        <div class="lottery-tool-title">
+          <div class="title-text">獎項清單</div>
+          <button id="toggleAddBtn" aria-expanded="false">新增</button>
+        </div>
+        <div id="prizeListDisplay" class="lottery-tool-list">
+        </div>
+
+        <div class="total-remaining-wrap" id="totalRemainingWrap" aria-hidden="false">
+          <div class="total-label" id="totalLabel">總剩餘</div>
+          <div class="total-circle" id="totalCircle">0</div>
+        </div>
+        
+        <div class="lottery-input-row" id="inputRow">
+          <input type="text" id="prizeNameInput" class="lottery-input" placeholder="輸入獎項名稱..." maxlength="18" style="flex: 2;">
+          <input type="number" id="prizeQtyInput" class="lottery-input" placeholder="數量" min="1" style="flex: 1; max-width: 120px;">
+          <button class="lottery-add-btn" id="addBtn">加入</button>
+        </div>
       </div>
     </div>
   </div>
@@ -397,151 +574,424 @@
     Copyright 2025 藥嚀管 (UI Design David Cao , Coding Setup 、網站架設維護、資安控管 <a href="https://tw.linkedin.com/in/nasirlincy" target="_blank"> Nasir Lin</a>)
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script>
-    const MAX_ITEMS = 12;
+    const MAX_TYPES = 10;
     const COLORS = [
       '#a8e063','#56ab2f','#ffe29f','#eecda3','#f7b42c','#f7797d','#86a8e7','#a8edea',
-      '#f5d020','#e1eec3','#f857a6','#ff5858'
+      '#f5d020','#e1eec3'
     ];
-    let items = [];
+    let prizes = [];
     let spinning = false;
     let angle = 0;
     let resultTimeout = null;
 
     const wheelCanvas = document.getElementById('wheelCanvas');
     const ctx = wheelCanvas.getContext('2d');
-    const itemsList = document.getElementById('itemsList');
     const resultDiv = document.getElementById('result');
+    const prizeListDisplay = document.getElementById('prizeListDisplay');
+    const prizeNameInput = document.getElementById('prizeNameInput');
+    const prizeQtyInput = document.getElementById('prizeQtyInput');
+    const addBtn = document.getElementById('addBtn');
+    const spinBtn = document.getElementById('spinBtn');
+    const toggleAddBtn = document.getElementById('toggleAddBtn');
+    const inputRow = document.getElementById('inputRow');
+    const totalCircle = document.getElementById('totalCircle');
+    
+    const spinnerArrow = document.getElementById('spinnerArrow');
 
-    function drawWheel(selectedIndex = null) {
-      ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
-      const total = items.length;
-      if (total === 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(130, 130, 120, 0, Math.PI * 2);
-        ctx.fillStyle = "#ececec";
-        ctx.fill();
-        ctx.font = "bold 20px 'Noto Sans TC', Arial";
-        ctx.fillStyle = "#b2b2b2";
-        ctx.textAlign = "center";
-        ctx.fillText("請加入選項", 130, 136);
-        ctx.restore();
-        return;
-      }
-      const center = 130;
-      const radius = 120;
-      const arc = 2 * Math.PI / total;
-      for (let i = 0; i < total; i++) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(center, center);
-        ctx.arc(center, center, radius, angle + arc * i, angle + arc * (i + 1), false);
-        ctx.closePath();
-        ctx.fillStyle = COLORS[i % COLORS.length];
-        ctx.globalAlpha = (selectedIndex === i) ? 0.56 : 1;
-        ctx.fill();
-        ctx.restore();
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
-        ctx.save();
-        ctx.translate(center, center);
-        ctx.rotate(angle + arc * (i + 0.5));
-        ctx.textAlign = "center";
-        ctx.font = (items[i].length > 10 ? "bold 13px" : "bold 15px") + " 'Noto Sans TC', Arial";
-        ctx.fillStyle = "#222";
-        ctx.fillText(items[i], 68, 9);
-        ctx.restore();
+    function savePrizes() {
+      try {
+        const prizesJSON = JSON.stringify(prizes);
+        localStorage.setItem('lotteryPrizes', prizesJSON);
+        const d = new Date();
+        d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = `lotteryPrizes=${encodeURIComponent(prizesJSON)};${expires};path=/;SameSite=Strict`;
+      } catch (e) {
+        console.error("儲存獎項失敗:", e);
       }
     }
 
-    function updateItemsList() {
-      itemsList.innerHTML = '';
-      items.forEach((item, idx) => {
-        const tag = document.createElement('span');
-        tag.className = 'lottery-item-tag';
-        tag.textContent = item;
+    function loadPrizes() {
+      let prizesJSON = null;
+      try {
+        prizesJSON = localStorage.getItem('lotteryPrizes');
+        if (!prizesJSON) {
+          let cookieVal = getCookie('lotteryPrizes');
+          if (cookieVal) {
+            prizesJSON = decodeURIComponent(cookieVal);
+          }
+        }
+        if (prizesJSON) {
+          prizes = JSON.parse(prizesJSON);
+        } else {
+          prizes = [];
+        }
+      } catch (e) {
+        console.error("讀取獎項失敗:", e);
+        prizes = [];
+      }
+    }
+
+    function resizeCanvasForDPR() {
+      const dpr = window.devicePixelRatio || 1;
+      const cssWidth = wheelCanvas.clientWidth;
+      const cssHeight = wheelCanvas.clientHeight;
+      wheelCanvas.width = Math.round(cssWidth * dpr);
+      wheelCanvas.height = Math.round(cssHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function updateTotalRemainingDisplay() {
+      const totalRemaining = prizes.reduce((sum, p) => sum + p.quantity, 0);
+      totalCircle.textContent = totalRemaining;
+    }
+
+    function fitTextToWidth(text, maxWidth, fontBase, fontWeight = '700', fontFamily = "'Noto Sans TC', Arial") {
+      let fontSize = fontBase;
+      ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
+      let width = ctx.measureText(text).width;
+      while (width > maxWidth && fontSize > 10) {
+        fontSize -= 1;
+        ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
+        width = ctx.measureText(text).width;
+      }
+      if (width <= maxWidth) return { fontSize, text };
+      
+      let truncated = text;
+      while (truncated.length > 0) {
+        truncated = truncated.slice(0, -1);
+        const withEll = truncated + '…';
+        width = ctx.measureText(withEll).width;
+        if (width <= maxWidth) {
+          return { fontSize, text: withEll };
+        }
+      }
+      return { fontSize: Math.max(10, fontSize), text: '…' };
+    }
+
+    function drawCenterMarker(centerX, centerY, radius) {
+    }
+
+    function drawWheel(selectedIndex = null) {
+      resizeCanvasForDPR();
+      ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+      const wheelItems = prizes.filter(p => p.quantity > 0);
+      const totalQuantity = wheelItems.reduce((sum, p) => sum + p.quantity, 0);
+
+      const cssWidth = wheelCanvas.clientWidth;
+      const cssHeight = wheelCanvas.clientHeight;
+      const centerX = cssWidth / 2;
+      const centerY = cssHeight / 2;
+      const radius = Math.max(30, Math.min(centerX, centerY) - 8);
+
+      if (totalQuantity === 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#ececec";
+        ctx.fill();
+        ctx.font = "700 " + Math.max(16, Math.round(radius * 0.18)) + "px 'Noto Sans TC', Arial";
+        ctx.fillStyle = "#b2b2b2";
+        ctx.textAlign = "center";
+        ctx.fillText("請加入獎項", centerX, centerY + 6);
+        ctx.restore();
+        updateTotalRemainingDisplay();
+        return;
+      }
+
+      let currentDrawAngle = -Math.PI / 2;
+
+      for (let i = 0; i < wheelItems.length; i++) {
+        const item = wheelItems[i];
+        const itemArc = (item.quantity / totalQuantity) * (2 * Math.PI);
+        const startAngle = currentDrawAngle;
+        const endAngle = currentDrawAngle + itemArc;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+        ctx.closePath();
+        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.globalAlpha = 1.0;
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        const midAngle = startAngle + itemArc / 2;
+        ctx.rotate(midAngle);
+        ctx.textAlign = "center";
+
+        const prizeName = item.name;
+        const textRadius = radius * 0.62;
+        
+        const sliceArcLength = Math.max(20, itemArc * textRadius * 0.92);
+        const baseFont = prizeName.length > 10 ? Math.max(12, Math.round(radius * 0.12)) : Math.max(14, Math.round(radius * 0.14));
+        const fit = fitTextToWidth(prizeName, sliceArcLength, baseFont);
+        
+        ctx.font = "700 " + fit.fontSize + "px 'Noto Sans TC', Arial";
+        ctx.fillStyle = "#222";
+        if (selectedIndex !== null && selectedIndex !== i) {
+          ctx.globalAlpha = 0.75;
+        } else {
+          ctx.globalAlpha = 1.0;
+        }
+        ctx.fillText(fit.text, textRadius, Math.max(6, radius * 0.03));
+        ctx.restore();
+        
+        currentDrawAngle = endAngle;
+      }
+
+      updateTotalRemainingDisplay();
+    }
+
+    function updatePrizeListDisplay() {
+      prizeListDisplay.innerHTML = '';
+      if (prizes.length === 0) {
+        const emptyEl = document.createElement('div');
+        emptyEl.textContent = '尚未新增獎項';
+        emptyEl.style.textAlign = 'center';
+        emptyEl.style.color = '#888';
+        emptyEl.style.padding = '10px 0';
+        prizeListDisplay.appendChild(emptyEl);
+        updateTotalRemainingDisplay();
+        return;
+      }
+      prizes.forEach((prize, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'prize-list-item';
+        const nameEl = document.createElement('span');
+        nameEl.className = 'prize-list-name';
+        nameEl.textContent = prize.name;
+        const rightGroup = document.createElement('div');
+        rightGroup.className = 'prize-list-right';
+        const qtyEl = document.createElement('span');
+        qtyEl.className = 'prize-list-qty';
+        qtyEl.textContent = `剩 ${prize.quantity}`;
+        if (prize.quantity === 0) {
+          qtyEl.classList.add('zero');
+        }
         const removeBtn = document.createElement('button');
-        removeBtn.className = 'lottery-item-remove';
+        removeBtn.className = 'prize-list-remove';
         removeBtn.innerHTML = '✕';
         removeBtn.title = '移除';
         removeBtn.onclick = () => {
-          items.splice(idx,1);
+          if (spinning) return;
+          prizes.splice(idx, 1);
+          savePrizes();
           drawWheel();
-          updateItemsList();
+          updatePrizeListDisplay();
           resultDiv.textContent = '';
         };
-        tag.appendChild(removeBtn);
-        itemsList.appendChild(tag);
+        rightGroup.appendChild(qtyEl);
+        rightGroup.appendChild(removeBtn);
+        itemEl.appendChild(nameEl);
+        itemEl.appendChild(rightGroup);
+        prizeListDisplay.appendChild(itemEl);
       });
+      updateTotalRemainingDisplay();
     }
 
-    document.getElementById('addBtn').onclick = () => {
-      const value = document.getElementById('lotteryInput').value.trim();
-      if (!value) return;
-      if (items.length >= MAX_ITEMS) {
-        alert('最多只能加入12個選項！');
+    addBtn.onclick = () => {
+      const name = prizeNameInput.value.trim();
+      const quantity = parseInt(prizeQtyInput.value);
+      if (!name || !quantity || quantity < 1) {
+        Swal.fire({
+          icon: 'warning',
+          title: '輸入錯誤',
+          text: '請輸入有效的獎項名稱與大於 0 的數量！',
+          confirmButtonText: '確定',
+          customClass: { popup: 'swal-solid' }
+        });
         return;
       }
-      if (items.includes(value)) {
-        alert('該選項已存在！');
+      if (prizes.length >= MAX_TYPES) {
+        Swal.fire({
+          icon: 'info',
+          title: '上限',
+          text: '最多只能加入 ' + MAX_TYPES + ' 種獎項！',
+          confirmButtonText: '確定',
+          customClass: { popup: 'swal-solid' }
+        });
         return;
       }
-      items.push(value);
-      document.getElementById('lotteryInput').value = '';
+      if (prizes.some(p => p.name === name)) {
+        Swal.fire({
+          icon: 'info',
+          title: '名稱重複',
+          text: '該獎項名稱已存在！',
+          confirmButtonText: '確定',
+          customClass: { popup: 'swal-solid' }
+        });
+        return;
+      }
+      prizes.push({ name, quantity });
+      savePrizes();
+      prizeNameInput.value = '';
+      prizeQtyInput.value = '';
       drawWheel();
-      updateItemsList();
+      updatePrizeListDisplay();
+      
+      logPrizeAdded(name, quantity, prizes);
+
       resultDiv.textContent = '';
+      prizeNameInput.focus();
     };
 
-    document.getElementById('lotteryInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') document.getElementById('addBtn').click();
+    prizeNameInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') prizeQtyInput.focus();
+    });
+    prizeQtyInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') addBtn.click();
     });
 
-    document.getElementById('spinBtn').onclick = () => {
+    spinBtn.onclick = () => {
       if (spinning) return;
-      if (items.length === 0) {
-        alert("請先加入至少一個選項！");
+      const wheelItems = prizes.filter(p => p.quantity > 0);
+      if (wheelItems.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: '無可抽獎項',
+          text: '已無剩餘獎品可抽！請先新增獎項或補貨。',
+          confirmButtonText: '確定',
+          customClass: { popup: 'swal-solid' }
+        });
         return;
       }
       spinning = true;
       resultDiv.textContent = '';
-      let total = items.length;
-      let selected = Math.floor(Math.random() * total);
+      
+      const totalQuantity = wheelItems.reduce((sum, p) => sum + p.quantity, 0);
+      let randomTicket = Math.random() * totalQuantity;
+      let selectedIndex = -1;
+      let winningPrizeData = null;
+      let cumulativeQty = 0;
+
+      for (let i = 0; i < wheelItems.length; i++) {
+        cumulativeQty += wheelItems[i].quantity;
+        if (randomTicket < cumulativeQty) {
+          selectedIndex = i;
+          winningPrizeData = wheelItems[i];
+          break;
+        }
+      }
+
+      if (selectedIndex === -1) {  
+        selectedIndex = wheelItems.length - 1;
+        winningPrizeData = wheelItems[selectedIndex];
+      }
+      
+      let startAngleOfWinningSlice = 0;
+      let arcOfWinningSlice = 0;
+
+      let cumulativeArc = -Math.PI / 2; 
+      
+      for (let i = 0; i < wheelItems.length; i++) {
+        let itemArc = (wheelItems[i].quantity / totalQuantity) * (2 * Math.PI);
+        if (i === selectedIndex) {
+          startAngleOfWinningSlice = cumulativeArc;
+          arcOfWinningSlice = itemArc;
+          break;
+        }
+        cumulativeArc += itemArc;
+      }
+      
+      let middleAngleOfWinningSlice = startAngleOfWinningSlice + arcOfWinningSlice / 2;
+      
+      let randomOffset = (Math.random() - 0.5) * (arcOfWinningSlice * 0.8);
+      let finalTargetAngle = middleAngleOfWinningSlice + randomOffset;
+
       let rounds = 6 + Math.floor(Math.random() * 2);
-      let targetAngle = (2 * Math.PI / total) * (total - selected - 0.5);
-      let finalAngle = 2 * Math.PI * rounds + targetAngle;
+      let finalAngle = 2 * Math.PI * rounds + finalTargetAngle;
+      
       let current = angle;
       let duration = 2500 + Math.random() * 500;
       let startTime = null;
-      document.getElementById('addBtn').disabled = true;
-      document.getElementById('spinBtn').disabled = true;
-
+      addBtn.disabled = true;
+      spinBtn.disabled = true;
+      document.querySelectorAll('.prize-list-remove').forEach(btn => btn.disabled = true);
+      
       function animateWheel(ts) {
         if (!startTime) startTime = ts;
         let progress = (ts - startTime) / duration;
         if (progress > 1) progress = 1;
         let ease = (1 - Math.cos(Math.PI * progress)) / 2;
         angle = current + (finalAngle - current) * ease;
-        drawWheel();
+    
+        spinnerArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${angle}rad)`;
+
         if (progress < 1) {
           requestAnimationFrame(animateWheel);
         } else {
           angle = finalAngle % (2 * Math.PI);
-          drawWheel(selected);
+          spinnerArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${angle}rad)`;
+          
           spinning = false;
-          document.getElementById('addBtn').disabled = false;
-          document.getElementById('spinBtn').disabled = false;
+          addBtn.disabled = false;
+          spinBtn.disabled = false;
+          document.querySelectorAll('.prize-list-remove').forEach(btn => btn.disabled = false);
           if (resultTimeout) clearTimeout(resultTimeout);
           resultTimeout = setTimeout(() => {
-            resultDiv.textContent = "🎉 結果：" + items[selected] + " 🎉";
+            resultDiv.textContent = "🎉 結果：" + winningPrizeData.name + " 🎉";
+            
+            let originalPrize = prizes.find(p => p.name === winningPrizeData.name);
+            if (originalPrize && originalPrize.quantity > 0) {
+              originalPrize.quantity--;
+            }
+            savePrizes();
+
+            logPrizeWon(winningPrizeData.name, prizes);
+            
+            updatePrizeListDisplay();
+            Swal.fire({
+              title: '恭喜你！',
+              html: '<div style="margin-top:8px;font-weight:800;font-size:1.15em;color:#1f7a33;">' + winningPrizeData.name + '</div>',
+              icon: 'success',
+              confirmButtonText: '確定',
+              customClass: { popup: 'swal-solid' }
+            });
           }, 260);
         }
       }
       requestAnimationFrame(animateWheel);
     };
 
+    toggleAddBtn.addEventListener('click', () => {
+      const expanded = toggleAddBtn.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        inputRow.style.display = 'none';
+        toggleAddBtn.setAttribute('aria-expanded', 'false');
+        toggleAddBtn.textContent = '新增';
+      } else {
+        inputRow.style.display = 'flex';
+        toggleAddBtn.setAttribute('aria-expanded', 'true');
+        toggleAddBtn.textContent = '收起';
+        prizeNameInput.focus();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      drawWheel();
+    });
+
+    loadPrizes();
     drawWheel();
-    updateItemsList();
+    updatePrizeListDisplay();
+    
+    if (typeof logPageView === 'function') {
+      logPageView(prizes);
+    }
   </script>
 </body>
 </html>

@@ -8,14 +8,11 @@
   <link rel="icon" type="image/png" href="https://i.meee.com.tw/XxNFjDY.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    /* 主體樣式與新版背景漸層 */
+
     body {
       min-height: 100vh;
       margin: 0;
       font-family: 'Segoe UI', 'Noto Sans TC', Arial, sans-serif;
-
-      /* 新的垂直漸層：上方接近白，中段柔和淺綠，下方到深綠，
-         並用 background-attachment: fixed 讓捲動時背景固定，感覺像圖片一樣 */
       background: linear-gradient(
         to bottom,
         rgba(255,255,255,1) 0%,
@@ -262,7 +259,6 @@
       box-sizing: border-box;
     }
 
-    /* green gradient outer block (the "區塊" for icons) - dashed removed */
     .left-column .img-placeholder-card {
       border: none;
       min-width: 0;
@@ -281,7 +277,7 @@
 
     .left-column .img-placeholder-card .img-box {
       width: 100%;
-      height: 270px; /* 180 * 1.5 */
+      height: 270px; 
       max-height: none;
       display: flex;
       align-items: center;
@@ -296,7 +292,6 @@
     .left-column .img-placeholder-card .img-box img {
       width: auto;
       height: auto;
-      /* allow the image to grow larger inside the taller box, but keep its aspect ratio */
       max-width: 95%;
       max-height: 95%;
       object-fit: contain;
