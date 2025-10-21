@@ -100,49 +100,41 @@
       width: 560px;
       height: 420px;
       margin-bottom: 18px;
-
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    
 
     #spinnerArrow {
       position: absolute;
       left: 50%;
-      top: 50%; 
+      top: 12px; 
       width: 0;
       height: 0;
-
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-bottom: 90px solid #d9534f; 
-      transform-origin: 50% 100%; 
-      transform: translateX(-50%) translateY(-100%); 
-      
-      z-index: 10;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 56px solid #d9534f; 
+      transform: translateX(-50%);
+      z-index: 20;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+      pointer-events: none;
     }
-    #spinnerArrow::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 100%; 
-      width: 16px;
-      height: 16px;
-      background: #fff;
-      border: 2px solid #d9534f;
-      border-radius: 50%;
-      transform: translate(-50%, -50%); 
-      z-index: 11;
-    }
+    #spinnerArrow::before { display: none; }
 
     canvas#wheelCanvas {
       border-radius: 50%;
-      background: #f3f3f3;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      background: transparent;
+      box-shadow: transparent;
       width: 100%;
       height: 100%;
       display: block;
+      transform-origin: 50% 50%; 
+      will-change: transform;
+      background-clip: padding-box;
     }
     .lottery-spin-btn {
+      position: relative;
+      z-index: 10;
       display: block;
       margin: 0 auto 12px;
       background: linear-gradient(90deg, #44b74a 0%, #8ddf91 100%);
@@ -382,7 +374,9 @@
         font-size: 1.45em;
       }
       #spinnerArrow {
-        border-bottom-width: 70px;
+        border-bottom-width: 48px;
+        border-left-width: 10px;
+        border-right-width: 10px;
       }
     }
 
@@ -432,15 +426,11 @@
         width: 80px;
         height: 80px;
       }
-      /* 【修正 4】: 調整指針大小 */
       #spinnerArrow {
-        border-bottom-width: 60px;
+        top: 10px;
+        border-bottom-width: 44px;
         border-left-width: 8px;
         border-right-width: 8px;
-      }
-      #spinnerArrow::before {
-        width: 14px;
-        height: 14px;
       }
     }
     @media (max-width: 600px) {
@@ -484,13 +474,10 @@
         font-size: 1.05em;
       }
       #spinnerArrow {
-        border-bottom-width: 50px;
+        top: 8px;
+        border-bottom-width: 36px;
         border-left-width: 7px;
         border-right-width: 7px;
-      }
-      #spinnerArrow::before {
-        width: 12px;
-        height: 12px;
       }
     }
 
@@ -539,12 +526,12 @@
       <div class="lottery-left">
         <div class="lottery-card lottery-title-card">抽獎轉盤</div>
         <div class="lottery-wheel-container">
-          <div class="lottery-wheel">
-            <canvas id="wheelCanvas"></canvas>
-            <div id="spinnerArrow"></div>
+          <div class="lottery-wheel" aria-hidden="false">
+            <canvas id="wheelCanvas" role="img" aria-label="抽獎轉盤"></canvas>
+            <div id="spinnerArrow" aria-hidden="true"></div>
           </div>
           <button class="lottery-spin-btn" id="spinBtn">開始抽獎</button>          
-          <div class="lottery-result" id="result"></div>
+          <div class="lottery-result" id="result" aria-live="polite"></div>
         </div>
       </div>
       
@@ -553,7 +540,7 @@
           <div class="title-text">獎項清單</div>
           <button id="toggleAddBtn" aria-expanded="false">新增</button>
         </div>
-        <div id="prizeListDisplay" class="lottery-tool-list">
+        <div id="prizeListDisplay" class="lottery-tool-list" role="list">
         </div>
 
         <div class="total-remaining-wrap" id="totalRemainingWrap" aria-hidden="false">
@@ -584,7 +571,7 @@
     ];
     let prizes = [];
     let spinning = false;
-    let angle = 0;
+    let wheelRotation = 0; 
     let resultTimeout = null;
 
     const wheelCanvas = document.getElementById('wheelCanvas');
@@ -597,8 +584,7 @@
     const spinBtn = document.getElementById('spinBtn');
     const toggleAddBtn = document.getElementById('toggleAddBtn');
     const inputRow = document.getElementById('inputRow');
-    const totalCircle = document.getElementById('totalCircle');
-    
+    const totalCircle = document.getElementById('totalCircle');    
     const spinnerArrow = document.getElementById('spinnerArrow');
 
     function getCookie(name) {
@@ -645,13 +631,14 @@
       const dpr = window.devicePixelRatio || 1;
       const cssWidth = wheelCanvas.clientWidth;
       const cssHeight = wheelCanvas.clientHeight;
+      if (!cssWidth || !cssHeight) return;
       wheelCanvas.width = Math.round(cssWidth * dpr);
       wheelCanvas.height = Math.round(cssHeight * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function updateTotalRemainingDisplay() {
-      const totalRemaining = prizes.reduce((sum, p) => sum + p.quantity, 0);
+      const totalRemaining = prizes.reduce((sum, p) => sum + (Number(p.quantity) || 0), 0);
       totalCircle.textContent = totalRemaining;
     }
 
@@ -665,7 +652,6 @@
         width = ctx.measureText(text).width;
       }
       if (width <= maxWidth) return { fontSize, text };
-      
       let truncated = text;
       while (truncated.length > 0) {
         truncated = truncated.slice(0, -1);
@@ -678,14 +664,21 @@
       return { fontSize: Math.max(10, fontSize), text: '…' };
     }
 
-    function drawCenterMarker(centerX, centerY, radius) {
+    function shadeColor(hex, percent) {
+      let num = parseInt(hex.replace('#',''),16), amt = Math.round(2.55 * percent);
+      let r = (num >> 16) + amt;
+      let g = (num >> 8 & 0x00FF) + amt;
+      let b = (num & 0x0000FF) + amt;
+      return "#" + (0x1000000 + (r<255? (r<1?0:r):255)*0x10000 + (g<255? (g<1?0:g):255)*0x100 + (b<255? (b<1?0:b):255)).toString(16).slice(1);
     }
 
-    function drawWheel(selectedIndex = null) {
+    function drawWheel(wheelItemsSnapshot = null, selectedIndex = null) {
       resizeCanvasForDPR();
+      if (!wheelCanvas.clientWidth || !wheelCanvas.clientHeight) return;
+
       ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
 
-      const wheelItems = prizes.filter(p => p.quantity > 0);
+      const wheelItems = wheelItemsSnapshot || prizes.filter(p => Number(p.quantity) > 0).map(p => ({ name: p.name, quantity: Number(p.quantity) }));
       const totalQuantity = wheelItems.reduce((sum, p) => sum + p.quantity, 0);
 
       const cssWidth = wheelCanvas.clientWidth;
@@ -722,9 +715,17 @@
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
         ctx.closePath();
-        ctx.fillStyle = COLORS[i % COLORS.length];
-        ctx.globalAlpha = 1.0;
-        ctx.fill();
+
+        if (selectedIndex !== null && selectedIndex === i) {
+          ctx.fillStyle = shadeColor(COLORS[i % COLORS.length], -6);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = COLORS[i % COLORS.length];
+          ctx.fill();
+        }
         ctx.restore();
 
         ctx.save();
@@ -735,21 +736,16 @@
 
         const prizeName = item.name;
         const textRadius = radius * 0.62;
-        
         const sliceArcLength = Math.max(20, itemArc * textRadius * 0.92);
         const baseFont = prizeName.length > 10 ? Math.max(12, Math.round(radius * 0.12)) : Math.max(14, Math.round(radius * 0.14));
         const fit = fitTextToWidth(prizeName, sliceArcLength, baseFont);
-        
+
         ctx.font = "700 " + fit.fontSize + "px 'Noto Sans TC', Arial";
         ctx.fillStyle = "#222";
-        if (selectedIndex !== null && selectedIndex !== i) {
-          ctx.globalAlpha = 0.75;
-        } else {
-          ctx.globalAlpha = 1.0;
-        }
+        ctx.globalAlpha = (selectedIndex !== null && selectedIndex !== i) ? 0.75 : 1.0;
         ctx.fillText(fit.text, textRadius, Math.max(6, radius * 0.03));
         ctx.restore();
-        
+
         currentDrawAngle = endAngle;
       }
 
@@ -779,7 +775,7 @@
         const qtyEl = document.createElement('span');
         qtyEl.className = 'prize-list-qty';
         qtyEl.textContent = `剩 ${prize.quantity}`;
-        if (prize.quantity === 0) {
+        if (Number(prize.quantity) === 0) {
           qtyEl.classList.add('zero');
         }
         const removeBtn = document.createElement('button');
@@ -843,7 +839,7 @@
       drawWheel();
       updatePrizeListDisplay();
       
-      logPrizeAdded(name, quantity, prizes);
+      if (typeof logPrizeAdded === 'function') logPrizeAdded(name, quantity, prizes);
 
       resultDiv.textContent = '';
       prizeNameInput.focus();
@@ -856,9 +852,34 @@
       if (e.key === 'Enter') addBtn.click();
     });
 
+    function toPositiveTwoPi(a) {
+      const twoPi = 2 * Math.PI;
+      return ((a % twoPi) + twoPi) % twoPi;
+    }
+
+    function getIndexFromPointerAngle(wheelItemsSnapshot, pointerAngle) {
+      const total = wheelItemsSnapshot.reduce((s, it) => s + it.quantity, 0);
+      let cumulative = -Math.PI / 2;
+      const normPointer = toPositiveTwoPi(pointerAngle);
+
+      for (let i = 0; i < wheelItemsSnapshot.length; i++) {
+        const itemArc = (wheelItemsSnapshot[i].quantity / total) * (2 * Math.PI);
+        let start = toPositiveTwoPi(cumulative);
+        let end = toPositiveTwoPi(cumulative + itemArc);
+        if (start < end) {
+          if (normPointer >= start && normPointer < end) return i;
+        } else {
+          
+          if (normPointer >= start || normPointer < end) return i;
+        }
+        cumulative += itemArc;
+      }
+      return -1;
+    }
+
     spinBtn.onclick = () => {
       if (spinning) return;
-      const wheelItems = prizes.filter(p => p.quantity > 0);
+      const wheelItems = prizes.filter(p => Number(p.quantity) > 0).map(p => ({ name: p.name, quantity: Number(p.quantity) }));
       if (wheelItems.length === 0) {
         Swal.fire({
           icon: 'info',
@@ -869,36 +890,32 @@
         });
         return;
       }
-      spinning = true;
-      resultDiv.textContent = '';
-      
-      const totalQuantity = wheelItems.reduce((sum, p) => sum + p.quantity, 0);
+
+      const wheelItemsSnapshot = wheelItems.slice();
+
+      const totalQuantity = wheelItemsSnapshot.reduce((sum, p) => sum + p.quantity, 0);
       let randomTicket = Math.random() * totalQuantity;
       let selectedIndex = -1;
       let winningPrizeData = null;
       let cumulativeQty = 0;
-
-      for (let i = 0; i < wheelItems.length; i++) {
-        cumulativeQty += wheelItems[i].quantity;
+      for (let i = 0; i < wheelItemsSnapshot.length; i++) {
+        cumulativeQty += wheelItemsSnapshot[i].quantity;
         if (randomTicket < cumulativeQty) {
           selectedIndex = i;
-          winningPrizeData = wheelItems[i];
+          winningPrizeData = wheelItemsSnapshot[i];
           break;
         }
       }
-
-      if (selectedIndex === -1) {  
-        selectedIndex = wheelItems.length - 1;
-        winningPrizeData = wheelItems[selectedIndex];
+      if (selectedIndex === -1 || !winningPrizeData) {
+        console.error("未能選中獎品。抽獎邏輯可能存在問題。");
+        return;
       }
-      
+
+      let cumulativeArc = -Math.PI / 2;
       let startAngleOfWinningSlice = 0;
       let arcOfWinningSlice = 0;
-
-      let cumulativeArc = -Math.PI / 2; 
-      
-      for (let i = 0; i < wheelItems.length; i++) {
-        let itemArc = (wheelItems[i].quantity / totalQuantity) * (2 * Math.PI);
+      for (let i = 0; i < wheelItemsSnapshot.length; i++) {
+        const itemArc = (wheelItemsSnapshot[i].quantity / totalQuantity) * (2 * Math.PI);
         if (i === selectedIndex) {
           startAngleOfWinningSlice = cumulativeArc;
           arcOfWinningSlice = itemArc;
@@ -906,53 +923,70 @@
         }
         cumulativeArc += itemArc;
       }
-      
-      let middleAngleOfWinningSlice = startAngleOfWinningSlice + arcOfWinningSlice / 2;
-      
-      let randomOffset = (Math.random() - 0.5) * (arcOfWinningSlice * 0.8);
-      let finalTargetAngle = middleAngleOfWinningSlice + randomOffset;
 
-      let rounds = 6 + Math.floor(Math.random() * 2);
-      let finalAngle = 2 * Math.PI * rounds + finalTargetAngle;
+      const middleAngleOfWinningSlice = startAngleOfWinningSlice + arcOfWinningSlice / 2;
+      const randomOffset = (Math.random() - 0.5) * (arcOfWinningSlice * 0.8);
+      const finalTargetAngle = middleAngleOfWinningSlice + randomOffset;
+
+      const rounds = 6 + Math.floor(Math.random() * 2);
       
-      let current = angle;
-      let duration = 2500 + Math.random() * 500;
+      const wheelTargetForSlice = -Math.PI / 2 - middleAngleOfWinningSlice;
+      const finalWheelRotation = 2 * Math.PI * rounds + wheelTargetForSlice + randomOffset * -1; 
+
+      const current = wheelRotation;
+      const duration = 2500 + Math.random() * 500;
       let startTime = null;
+
+      spinning = true;
       addBtn.disabled = true;
       spinBtn.disabled = true;
       document.querySelectorAll('.prize-list-remove').forEach(btn => btn.disabled = true);
-      
+
+      drawWheel(wheelItemsSnapshot, null);
+
       function animateWheel(ts) {
         if (!startTime) startTime = ts;
         let progress = (ts - startTime) / duration;
         if (progress > 1) progress = 1;
         let ease = (1 - Math.cos(Math.PI * progress)) / 2;
-        angle = current + (finalAngle - current) * ease;
-    
-        spinnerArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${angle}rad)`;
+        wheelRotation = current + (finalWheelRotation - current) * ease;
+
+        wheelCanvas.style.transform = `rotate(${wheelRotation}rad)`;
+
+        const pointerAngle = toPositiveTwoPi(-Math.PI / 2 - wheelRotation);
+        const indexUnderPointer = getIndexFromPointerAngle(wheelItemsSnapshot, pointerAngle);
+
+        drawWheel(wheelItemsSnapshot, indexUnderPointer);
 
         if (progress < 1) {
           requestAnimationFrame(animateWheel);
         } else {
-          angle = finalAngle % (2 * Math.PI);
-          spinnerArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${angle}rad)`;
           
+          wheelRotation = finalWheelRotation % (2 * Math.PI);
+          wheelCanvas.style.transform = `rotate(${wheelRotation}rad)`;
+
+          const finalPointerAngle = toPositiveTwoPi(-Math.PI / 2 - wheelRotation);
+          const finalIndex = getIndexFromPointerAngle(wheelItemsSnapshot, finalPointerAngle);
+
           spinning = false;
           addBtn.disabled = false;
           spinBtn.disabled = false;
           document.querySelectorAll('.prize-list-remove').forEach(btn => btn.disabled = false);
+
           if (resultTimeout) clearTimeout(resultTimeout);
           resultTimeout = setTimeout(() => {
+            
             resultDiv.textContent = "🎉 結果：" + winningPrizeData.name + " 🎉";
+
             
             let originalPrize = prizes.find(p => p.name === winningPrizeData.name);
-            if (originalPrize && originalPrize.quantity > 0) {
-              originalPrize.quantity--;
+            if (originalPrize && Number(originalPrize.quantity) > 0) {
+              originalPrize.quantity = Number(originalPrize.quantity) - 1;
             }
             savePrizes();
 
-            logPrizeWon(winningPrizeData.name, prizes);
-            
+            if (typeof logPrizeWon === 'function') logPrizeWon(winningPrizeData.name, prizes);
+
             updatePrizeListDisplay();
             Swal.fire({
               title: '恭喜你！',
@@ -964,6 +998,7 @@
           }, 260);
         }
       }
+
       requestAnimationFrame(animateWheel);
     };
 
@@ -982,16 +1017,18 @@
     });
 
     window.addEventListener('resize', () => {
+      resizeCanvasForDPR();
       drawWheel();
     });
 
-    loadPrizes();
-    drawWheel();
-    updatePrizeListDisplay();
     
-    if (typeof logPageView === 'function') {
-      logPageView(prizes);
-    }
+    loadPrizes();
+    setTimeout(() => {
+      resizeCanvasForDPR();
+      drawWheel();
+      updatePrizeListDisplay();
+      if (typeof logPageView === 'function') logPageView(prizes);
+    }, 50);
   </script>
 </body>
 </html>
